@@ -67,7 +67,7 @@ Try {
     $Headers = $UiPathAPIRequestGlobalVariables.Headers.Clone()
 	$Response = Invoke-RestMethod -Method Post -Uri $URI -Headers $Headers -Body $LoginModel
 
-    Write-Log -Message "Successfully authenticated to $URI on tenant $($Config.ReferenceOrchestrator.Tenant) with user $($Config.ReferenceOrchestrator.Username)"
+    Write-Log -Message "Successfully authenticated to $URI on tenant $($Config.ReferenceOrchestrator.Tenant) with user $($Config.ReferenceOrchestrator.Username)" -Path $LogFile -Level Info
 
 } Catch {
     $ErrorMessage = "Unable to communicate with $URI => $_"
@@ -84,32 +84,28 @@ If ($Response.Success) {
         # building URI
         $URI = $BaseURI + $UiPathAPIRequestGlobalVariables.EndPoints.GetLibraries
 
-        # Write-Log -Message "Retrieving all deployed libraries from reference orchestrator" -Path $LogFile -Level Info
         # retrieve all deployed libraries
         $Response = Invoke-RestMethod -Method Get -Uri $URI -Headers $Headers
         $Libraries = $Response.value
         $LibrariesCount = $Libraries.Count
 
-        Write-Log -Message "Successfully retrieved $LibrariesCount library(ies)"
+        Write-Log -Message "Successfully retrieved $LibrariesCount library(ies)" -Path $LogFile -Level Info
 
         # retrieve all deployed versions of libraries & write in CSV file
         $CurrentLibraryIndex = 1
         Foreach ($Library in $Libraries) {
             # building URI
             $URI = $BaseURI + ($UiPathAPIRequestGlobalVariables.EndPoints.GetLibraryVersions -f $Library.Id)
-            # Write-Log -Message "Retrieving all deployed versions for library $($Library.Id)" -Path $LogFile -Level Info
+
             # retrieve all deployed versions
             $Response = Invoke-RestMethod -Method Get -Uri $URI -Headers $Headers
 
-            # Write-Log -Message "Successfully retrieved $($Response.value.Count) version(s)"
-            
-            # Write-Log -Message "Writing all deployed versions to $CSVFile file" -Path $LogFile -Level Info
             # write all versions in CSV file
             Foreach ($Version in $Response.value) {
                 "$($Library.Id),$($Version.Version)" | Add-Content -Path $CSVFile
             }
 
-            Write-Log -Message "$CurrentLibraryIndex / $LibrariesCount - Successfully retrieved $($Response.value.Count) version(s) for library $($Library.Id)"
+            Write-Log -Message "$CurrentLibraryIndex / $LibrariesCount - Successfully retrieved $($Response.value.Count) version(s) for library $($Library.Id)" -Path $LogFile -Level Info
             $CurrentLibraryIndex++
 
         }
@@ -123,7 +119,7 @@ If ($Response.Success) {
     $DistinctLibraries = Import-Csv -Path $CSVFile | Select Library -Unique
     $DistinctLibrariesCount = $DistinctLibraries.Count
 
-    Write-Log -Message "Starting download of $DistinctLibrariesCount library(ies)"
+    Write-Log -Message "Starting download of $DistinctLibrariesCount library(ies)" -Path $LogFile -Level Info
 
     # download all versions of libraries from defined nuget feeds
     $DistinctLibraryIndex = 1
@@ -131,14 +127,14 @@ If ($Response.Success) {
         # building nuget.exe search expression
         $Search = "packageId:$($DistinctLibrary.Library)"
 
-        Write-Log -Message "$DistinctLibraryIndex / $DistinctLibrariesCount - Downloading $($DistinctLibrary.Library) library" -Level Info
+        Write-Log -Message "$DistinctLibraryIndex / $DistinctLibrariesCount - Downloading $($DistinctLibrary.Library) library" -Path $LogFile -Level Info
 
         # loop through NuGet feeds
         Foreach ($NuGetFeed in $Config.NuGetFeeds) {
             $NuGetFeedName = $NuGetFeed.Name
             $NuGetFeedLocation = $NuGetFeed.Location
 
-            Write-Log -Message "Trying to download from [$NuGetFeedName] NuGet feed" -Level Info
+            Write-Log -Message "Trying to download from [$NuGetFeedName] NuGet feed" -Path $LogFile -Level Info
 
             # search libraries with nuget.exe
             $LibraryVersions = .\nuget.exe list $Search -AllVersions -Source $NuGetFeedLocation
@@ -157,7 +153,6 @@ If ($Response.Success) {
                     # download version if greater than higher version already deployed in reference orchestrator
                     If ([System.Version]$Version -gt [System.Version]$HigherAlreadyDeployedVersion) {
                         Try {
-                            # Write-Log -Message "Downloading version $Version" -Path $LogFile -Level Info
                             .\nuget.exe install $Library -Version $Version -OutputDirectory $DownloadedPackagesFolder -Source $NuGetFeedLocation -PackageSaveMode nupkg | Out-Null
 
                             Write-Log -Message "Version $Version successfully downloaded" -Path $LogFile -Level Info
@@ -203,7 +198,7 @@ If ($Response.Success) {
             $Headers = $UiPathAPIRequestGlobalVariables.Headers.Clone()
 	        $Response = Invoke-RestMethod -Method Post -Uri $URI -Headers $Headers -Body $LoginModel
 
-            Write-Log -Message "Successfully authenticated to $URI on tenant $($TargetOrchestrator.Tenant) with user $($TargetOrchestrator.Username)"
+            Write-Log -Message "Successfully authenticated to $URI on tenant $($TargetOrchestrator.Tenant) with user $($TargetOrchestrator.Username)" -Path $LogFile -Level Info
 
         } Catch {
             $ErrorMessage = "Unable to communicate with $URI => $_"
@@ -242,13 +237,18 @@ If ($Response.Success) {
                 Try {
                     $Response = Invoke-RestMethod -Method Post -Uri $URI -Headers $Headers -Body $BodyLines
 
-                    Write-Log -Message "$Library uploaded successfully" -Level Info
+                    Write-Log -Message "$Library uploaded successfully" -Path $LogFile -Level Info
                 } Catch {
-                    $ErrorDetails = $_.ErrorDetails.Message | ConvertFrom-Json
-                    If ($ErrorDetails.message -ne 'Package already exists.') {
-                        Write-Log -Message "Unable to upload library $Library => $_" -Path $LogFile -Level Error
-                    } Else {
-                        Write-Log -Message "Library $Library already exists" -Level Warn
+                    Try {
+                        $RaisedError = $_
+                        $ErrorDetails = $RaisedError.ErrorDetails.Message | ConvertFrom-Json
+                        If ($ErrorDetails.message -ne 'Package already exists.') {
+                            Write-Log -Message "Unable to upload library $Library => $RaisedError" -Path $LogFile -Level Error
+                        } Else {
+                            Write-Log -Message "Library $Library already exists" -Path $LogFile -Level Warn
+                        }
+                    } Catch {
+                        Write-Log -Message "Unable to upload library $Library => $RaisedError" -Path $LogFile -Level Error
                     }
                 }
             }
