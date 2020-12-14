@@ -1,0 +1,264 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The root schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "default": {},
+    "examples": [
+        {
+            "ReferenceOrchestrator": {
+                "URL": "https://my.orchestrator.com/",
+                "Tenant": "Default",
+                "Username": "admin",
+                "Password": "password"
+            },
+            "TargetOrchestrators": [
+                {
+                    "URL": "https://my.orchestrator.com/",
+                    "Tenant": "Default",
+                    "Username": "admin",
+                    "Password": "password"
+                },
+                {
+                    "URL": "https://my.other.orchestrator.com/",
+                    "Tenant": "Default",
+                    "Username": "admin",
+                    "Password": "password"
+                }
+            ],
+            "NuGetFeeds": [
+                {
+                    "Name": "workflow",
+                    "Location": "https://www.myget.org/F/workflow/api/v2"
+                }
+            ]
+        }
+    ],
+    "required": [
+        "ReferenceOrchestrator",
+        "TargetOrchestrators",
+        "NuGetFeeds"
+    ],
+    "properties": {
+        "ReferenceOrchestrator": {
+            "$id": "#/properties/ReferenceOrchestrator",
+            "type": "object",
+            "title": "The ReferenceOrchestrator schema",
+            "description": "Orchestrator defined as reference. Downloaded libraries will have versions greater than those available in this Orchestrator.",
+            "default": {},
+            "examples": [
+                {
+                    "URL": "https://my.orchestrator.com/",
+                    "Tenant": "Default",
+                    "Username": "admin",
+                    "Password": "password"
+                }
+            ],
+            "required": [
+                "URL",
+                "Tenant",
+                "Username",
+                "Password"
+            ],
+            "properties": {
+                "URL": {
+                    "$id": "#/properties/ReferenceOrchestrator/properties/URL",
+                    "type": "string",
+                    "title": "The URL schema",
+                    "description": "Orchestrator URL.",
+                    "default": "",
+                    "examples": [
+                        "https://my.orchestrator.com/"
+                    ]
+                },
+                "Tenant": {
+                    "$id": "#/properties/ReferenceOrchestrator/properties/Tenant",
+                    "type": "string",
+                    "title": "The Tenant schema",
+                    "description": "Orchestrator Tenant.",
+                    "default": "",
+                    "examples": [
+                        "Default"
+                    ]
+                },
+                "Username": {
+                    "$id": "#/properties/ReferenceOrchestrator/properties/Username",
+                    "type": "string",
+                    "title": "The Username schema",
+                    "description": "Orchestrator local user name.",
+                    "default": "",
+                    "examples": [
+                        "admin"
+                    ]
+                },
+                "Password": {
+                    "$id": "#/properties/ReferenceOrchestrator/properties/Password",
+                    "type": "string",
+                    "title": "The Password schema",
+                    "description": "Orchestrator local user password.",
+                    "default": "",
+                    "examples": [
+                        "password"
+                    ]
+                }
+            },
+            "additionalProperties": true
+        },
+        "TargetOrchestrators": {
+            "$id": "#/properties/TargetOrchestrators",
+            "type": "array",
+            "title": "The TargetOrchestrators schema",
+            "description": "Orchestrators defined as targets. Downloaded libraries will be uploaded to these Orchestrators",
+            "default": [],
+            "examples": [
+                [
+                    {
+                        "URL": "https://my.orchestrator.com/",
+                        "Tenant": "Default",
+                        "Username": "admin",
+                        "Password": "password"
+                    },
+                    {
+                        "URL": "https://my.other.orchestrator.com/",
+                        "Tenant": "Default",
+                        "Username": "admin",
+                        "Password": "password"
+                    }
+                ]
+            ],
+            "additionalItems": true,
+            "items": {
+                "$id": "#/properties/TargetOrchestrators/items",
+                "anyOf": [
+                    {
+                        "$id": "#/properties/TargetOrchestrators/items/anyOf/0",
+                        "type": "object",
+                        "title": "The first anyOf schema",
+                        "description": "An explanation about the purpose of this instance.",
+                        "default": {},
+                        "examples": [
+                            {
+                                "URL": "https://my.orchestrator.com/",
+                                "Tenant": "Default",
+                                "Username": "admin",
+                                "Password": "password"
+                            }
+                        ],
+                        "required": [
+                            "URL",
+                            "Tenant",
+                            "Username",
+                            "Password"
+                        ],
+                        "properties": {
+                            "URL": {
+                                "$id": "#/properties/TargetOrchestrators/items/anyOf/0/properties/URL",
+                                "type": "string",
+                                "title": "The URL schema",
+                                "description": "Orchestrator URL.",
+                                "default": "",
+                                "examples": [
+                                    "https://my.orchestrator.com/"
+                                ]
+                            },
+                            "Tenant": {
+                                "$id": "#/properties/TargetOrchestrators/items/anyOf/0/properties/Tenant",
+                                "type": "string",
+                                "title": "The Tenant schema",
+                                "description": "Orchestrator Tenant.",
+                                "default": "",
+                                "examples": [
+                                    "Default"
+                                ]
+                            },
+                            "Username": {
+                                "$id": "#/properties/TargetOrchestrators/items/anyOf/0/properties/Username",
+                                "type": "string",
+                                "title": "The Username schema",
+                                "description": "Orchestrator local user name.",
+                                "default": "",
+                                "examples": [
+                                    "admin"
+                                ]
+                            },
+                            "Password": {
+                                "$id": "#/properties/TargetOrchestrators/items/anyOf/0/properties/Password",
+                                "type": "string",
+                                "title": "The Password schema",
+                                "description": "Orchestrator local user password.",
+                                "default": "",
+                                "examples": [
+                                    "password"
+                                ]
+                            }
+                        },
+                        "additionalProperties": true
+                    }
+                ]
+            }
+        },
+        "NuGetFeeds": {
+            "$id": "#/properties/NuGetFeeds",
+            "type": "array",
+            "title": "The NuGetFeeds schema",
+            "description": "NuGet feeds to search for new versions of libraries. NuGet feeds are scanned in the order they are defined, it means that if a library is not found in a feed, next one will be searched for.",
+            "default": [],
+            "examples": [
+                [
+                    {
+                        "Name": "workflow",
+                        "Location": "https://www.myget.org/F/workflow/api/v2"
+                    }
+                ]
+            ],
+            "additionalItems": true,
+            "items": {
+                "$id": "#/properties/NuGetFeeds/items",
+                "anyOf": [
+                    {
+                        "$id": "#/properties/NuGetFeeds/items/anyOf/0",
+                        "type": "object",
+                        "title": "The first anyOf schema",
+                        "description": "An explanation about the purpose of this instance.",
+                        "default": {},
+                        "examples": [
+                            {
+                                "Name": "workflow",
+                                "Location": "https://www.myget.org/F/workflow/api/v2"
+                            }
+                        ],
+                        "required": [
+                            "Name",
+                            "Location"
+                        ],
+                        "properties": {
+                            "Name": {
+                                "$id": "#/properties/NuGetFeeds/items/anyOf/0/properties/Name",
+                                "type": "string",
+                                "title": "The Name schema",
+                                "description": "Name of the NuGet feed (arbitrary).",
+                                "default": "",
+                                "examples": [
+                                    "workflow"
+                                ]
+                            },
+                            "Location": {
+                                "$id": "#/properties/NuGetFeeds/items/anyOf/0/properties/Location",
+                                "type": "string",
+                                "title": "The Location schema",
+                                "description": "URL of the NuGet feed.",
+                                "default": "",
+                                "examples": [
+                                    "https://www.myget.org/F/workflow/api/v2"
+                                ]
+                            }
+                        },
+                        "additionalProperties": true
+                    }
+                ]
+            }
+        }
+    },
+    "additionalProperties": true
+}

@@ -1,0 +1,23 @@
+{
+	"ReferenceOrchestrator": {
+		"URL": "https://my.orchestrator.com/",
+		"Tenant": "Default",
+		"Username": "admin",
+		"Password": "password"
+	},
+	"TargetOrchestrators": [{
+		"URL": "https://my.orchestrator.com/",
+		"Tenant": "Default",
+		"Username": "admin",
+		"Password": "password"
+	}, {
+		"URL": "https://my.other.orchestrator.com/",
+		"Tenant": "Default",
+		"Username": "admin",
+		"Password": "password"
+	}],
+	"NuGetFeeds": [{
+		"Name": "workflow",
+		"Location": "https://www.myget.org/F/workflow/api/v2"
+	}]
+}
