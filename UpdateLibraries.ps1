@@ -3,7 +3,7 @@
     This script is intented to get newer version of libraries in orchestrator
     It should be scheduled in order to regularly check if newer version of existing libraries are available in configured NuGet feeds
 .NOTES
-    Script created on 2020/12 by Masire FOFANA (masire.fofana@natixis.com)
+    Script created on 2020/12 by Masire FOFANA (masire.fofana@uipath.com)
 #>
 
 $Config = Get-Content -Raw -Path config.json | ConvertFrom-Json
