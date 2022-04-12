@@ -35,4 +35,4 @@ The tool has been test on UiPath Orchestrator 2019.10 on-premise version.
 
 Github: [https://github.com/masiref/UiPathOrchestratorLibrariesUpdater](https://github.com/masiref/UiPathOrchestratorLibrariesUpdater)
 
-Email: masire.fofana@natixis.com
+Email: masire.fofana@uipath.com
